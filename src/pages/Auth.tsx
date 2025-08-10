@@ -178,9 +178,9 @@ const Auth = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8 scroll-fade-in">
-          <img 
-            src="/lovable-uploads/297ee6c8-01e0-4f29-ab9c-61eef3186daf.png" 
-            alt="Mutuus" 
+          <img
+            src="http://mutuus-app.de/assets/logopng.png"
+            alt="Mutuus"
             className="h-16 w-auto mx-auto mb-4 floating glow-blue"
           />
           <h1 className="text-3xl font-bold text-white text-glow">Willkommen bei Mutuus</h1>
