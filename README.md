@@ -85,3 +85,30 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Notifications & E-Mail Setup
+
+The project ships with a basic notification service (push + mail). Required environment variables:
+
+```
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+ONESIGNAL_APP_ID=
+FCM_SERVER_KEY=
+APNS_KEYS_JSON=
+RESEND_API_KEY=
+SENDGRID_API_KEY=
+EMAIL_FROM="Mutuus <info@mutuus-app.de>"
+APP_BASE_URL=
+REDIS_URL=
+SIGNING_SECRET=
+EUROPE_TZ="Europe/Berlin"
+NOTIFY_RATE_LIMITS='{"perUserMinutes":10}'
+QUIET_HOURS_OVERRIDE_TYPES='["NEW_LOGIN","PAYMENT_ISSUE"]'
+```
+
+### DNS
+
+Configure SPF, DKIM and DMARC for `mutuus-app.de` so that emails from `info@mutuus-app.de` are accepted.
+
