@@ -43,7 +43,7 @@ const TutorialLesson = () => {
         {
           title: 'Willkommen im Dashboard',
           content: 'Das Dashboard ist Ihr Kontrollzentrum. Hier sehen Sie alle wichtigen Informationen auf einen Blick.',
-          image: '/lovable-uploads/297ee6c8-01e0-4f29-ab9c-61eef3186daf.png',
+          image: 'http://mutuus-app.de/assets/logopng.png',
           tips: [
             'Das Dashboard zeigt Ihre aktuellen Stats',
             'Neue Jobs werden hier prominent angezeigt',

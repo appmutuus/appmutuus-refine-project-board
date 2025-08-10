@@ -47,7 +47,7 @@ export const DashboardHeader = () => {
           <div className="flex items-center">
             <div className="mr-3 cursor-pointer hover-lift floating glow-blue" onClick={() => navigate('/dashboard')}>
               <img
-                src="/lovable-uploads/1a307408-cad9-4e5f-baa9-47e9004e7453.png"
+                src="http://mutuus-app.de/assets/logopng.png"
                 alt="Mutuus"
                 className="h-10 w-auto"
               />
