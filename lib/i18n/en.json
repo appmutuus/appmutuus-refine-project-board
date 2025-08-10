@@ -1,0 +1,10 @@
+{
+  "JOB_ACCEPTED": "{{helper_name}} accepted your job \"{{job_title}}\". Open chat now.",
+  "NEW_APPLICATION": "{{count}} new applications for \"{{job_title}}\".",
+  "JOB_REMINDER": "Reminder: \"{{job_title}}\" starts in 1 hour.",
+  "PAYMENT_RELEASED": "{{amount}}€ for \"{{job_title}}\" released. Withdraw now.",
+  "KARMA_UPDATE": "+{{points}} karma! Level {{level}} reached.",
+  "NEARBY_JOB": "New: \"{{job_title}}\" ({{distance_km}} km) – {{price}}€.",
+  "LEADERBOARD": "You are now rank {{rank}} in {{city}}.",
+  "VERIFICATION_SUCCESS": "Verification completed – full access granted."
+}
