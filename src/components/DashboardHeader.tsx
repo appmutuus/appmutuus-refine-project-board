@@ -82,7 +82,7 @@ export const DashboardHeader = () => {
                     <Menu className="w-4 h-4 mr-2" />
                     Menü
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="w-56 bg-gray-800 border-gray-700 glow-blue">
+                  <NavigationMenuContent className="w-56 bg-gray-800 border-gray-700 glow-blue left-auto right-0">
                     <div className="p-2">
                       {navigationItems.map((item, index) => (
                         <NavigationMenuLink
