@@ -1,11 +1,11 @@
-import Stripe from 'stripe';
+import { loadStripe } from '@stripe/stripe-js';
 
-const key = import.meta.env.VITE_STRIPE_SECRET_KEY as string;
+const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string;
 
 if (!key) {
-  console.warn('Stripe secret key missing');
+  console.warn('Stripe publishable key missing');
 }
 
-export const stripe = new Stripe(key || '', { apiVersion: '2022-11-15' });
+export const stripePromise = loadStripe(key);
 
-export default stripe;
+export default stripePromise;
