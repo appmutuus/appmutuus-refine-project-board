@@ -261,13 +261,6 @@ BEGIN
 END;
 $$;
 
--- Insert default missions
-INSERT INTO public.missions (title, description, mission_type, karma_reward, max_completions_per_week, photo_required) VALUES
-('Hilf einem Rentner beim Smartphone', 'Mache ein Selfie mit einem lächelnden Rentner, dem du geholfen hast', 'good_deed', 35, 1, true),
-('Sammle Müll im Park', 'Sammle Müll in einem öffentlichen Park und mache ein Foto', 'good_deed', 25, 3, true),
-('Lade einen Freund ein', 'Lade einen Freund zu Mutuus ein und erhalte Karma', 'referral', 20, 10, false),
-('Social Media Challenge', 'Poste über Mutuus mit Markierung und Screenshot', 'social_challenge', 10, 1, true),
-('Tutorial abschließen', 'Schließe das App-Tutorial ab', 'tutorial', 25, 1, false);
 
 -- Create trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()

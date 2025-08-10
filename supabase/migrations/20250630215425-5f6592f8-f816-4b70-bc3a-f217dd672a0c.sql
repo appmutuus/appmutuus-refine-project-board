@@ -81,12 +81,6 @@ CREATE POLICY "Users can view own activity" ON public.activity_log
 CREATE POLICY "System can insert activity" ON public.activity_log
   FOR INSERT WITH CHECK (true);
 
--- Add some sample tutorial achievements
-INSERT INTO public.achievements (name, description, icon, points_required, badge_type) VALUES
-('Tutorial Starter', 'Erste Lektion abgeschlossen', '🎓', 0, 'special'),
-('Campus Scholar', '10 Lektionen abgeschlossen', '📚', 0, 'special'),
-('Learning Master', 'Alle Campus Lektionen abgeschlossen', '🏆', 0, 'special'),
-('Quick Learner', 'Lektion in unter 5 Minuten abgeschlossen', '⚡', 0, 'special');
 
 -- Update profiles table to track tutorial progress
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tutorial_completed BOOLEAN DEFAULT FALSE;

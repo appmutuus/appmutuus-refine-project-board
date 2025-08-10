@@ -224,12 +224,3 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Insert some initial achievements
-INSERT INTO public.achievements (name, description, icon, points_required, badge_type) VALUES
-('Erste Hilfe', 'Erste Good Deed abgeschlossen', '🌟', 0, 'karma'),
-('Helfer', '10 Good Deeds abgeschlossen', '🏆', 100, 'karma'),
-('Karma-Meister', '500 Karma-Punkte gesammelt', '👑', 500, 'karma'),
-('Fleißiger Helfer', '50 Jobs abgeschlossen', '💪', 0, 'jobs_completed'),
-('Profi', '100 Jobs abgeschlossen', '🎯', 0, 'jobs_completed'),
-('Erstes Geld', 'Ersten bezahlten Job abgeschlossen', '💰', 0, 'earnings'),
-('Geschäftstüchtig', '500€ verdient', '💼', 0, 'earnings');
