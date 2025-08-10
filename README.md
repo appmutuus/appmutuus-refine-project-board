@@ -60,6 +60,20 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Environment variables
+
+Create a `.env.local` file and provide the following keys:
+
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_STRIPE_SECRET_KEY=
+```
+
+## Job creation form
+
+A basic job creation form is available at `/jobs/new`. It validates input with Zod and stores new jobs in Supabase.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/b62ad899-1b92-4bec-89ed-c9511234a672) and click on Share -> Publish.
