@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DashboardHeader } from '@/components/DashboardHeader';
 
-const MyJobs = () => {
+const MyJobs = ({ showHeader = true }: { showHeader?: boolean }) => {
   const [activeTab, setActiveTab] = useState('active');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -99,10 +99,10 @@ const MyJobs = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <DashboardHeader />
-      
-      <main className="container mx-auto px-4 py-6">
+    <div className={showHeader ? "min-h-screen bg-gray-900" : ""}>
+      {showHeader && <DashboardHeader />}
+
+      <div className={showHeader ? "container mx-auto px-4 py-6" : ""}>
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Meine Jobs</h1>
@@ -323,7 +323,7 @@ const MyJobs = () => {
             )}
           </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 };

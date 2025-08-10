@@ -76,7 +76,7 @@ const mockJobs = [
   }
 ];
 
-const Map = () => {
+const Map = ({ showHeader = true }: { showHeader?: boolean }) => {
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -115,10 +115,10 @@ const Map = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <DashboardHeader />
-      
-      <main className="container mx-auto px-4 py-6">
+    <div className={showHeader ? "min-h-screen bg-gray-900" : ""}>
+      {showHeader && <DashboardHeader />}
+
+      <div className={showHeader ? "container mx-auto px-4 py-6" : ""}>
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <div>
@@ -302,7 +302,7 @@ const Map = () => {
             </Dialog>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 };

@@ -198,9 +198,9 @@ const Dashboard = () => {
                 >
                   Missionen
                 </Button>
-                <Button 
-                  onClick={() => window.location.href = '/map'} 
-                  variant="outline" 
+                <Button
+                  onClick={() => window.location.href = '/jobs'}
+                  variant="outline"
                   className="w-full btn-futuristic hover-lift"
                 >
                   Karte öffnen

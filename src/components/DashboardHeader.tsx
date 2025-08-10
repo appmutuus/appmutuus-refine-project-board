@@ -1,5 +1,5 @@
 import React from 'react';
-import { FolderOpen, CheckSquare, Gift, MapPin, Users, WalletIcon, Menu, Trophy, Briefcase, BookOpen } from 'lucide-react';
+import { FolderOpen, CheckSquare, Gift, Users, WalletIcon, Menu, Trophy, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -17,9 +17,7 @@ export const DashboardHeader = () => {
 
   const navigationItems = [
     { name: 'Dashboard', href: '/dashboard', icon: FolderOpen },
-    { name: 'Karte', href: '/map', icon: MapPin },
     { name: 'Jobs', href: '/jobs', icon: CheckSquare },
-    { name: 'Meine Jobs', href: '/my-jobs', icon: Briefcase },
     { name: 'Campus', href: '/tutorial', icon: BookOpen },
     { name: 'Ranking', href: '/ranking', icon: Trophy },
     { name: 'Profil', href: '/profile', icon: Users },

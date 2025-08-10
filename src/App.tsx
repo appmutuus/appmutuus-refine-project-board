@@ -10,12 +10,10 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
-import Map from "./pages/Map";
 import Jobs from "./pages/Jobs";
 import Profile from "./pages/Profile";
 import Invite from "./pages/Invite";
 import Wallet from "./pages/Wallet";
-import MyJobs from "./pages/MyJobs";
 import Missions from "./pages/Missions";
 import Ranking from "./pages/Ranking";
 import Tutorial from "./pages/Tutorial";
@@ -39,11 +37,6 @@ const App = () => (
                   <Dashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/map" element={
-                <ProtectedRoute>
-                  <Map />
-                </ProtectedRoute>
-              } />
               <Route path="/jobs" element={
                 <ProtectedRoute>
                   <Jobs />
@@ -62,11 +55,6 @@ const App = () => (
               <Route path="/wallet" element={
                 <ProtectedRoute>
                   <Wallet />
-                </ProtectedRoute>
-              } />
-              <Route path="/my-jobs" element={
-                <ProtectedRoute>
-                  <MyJobs />
                 </ProtectedRoute>
               } />
               <Route path="/missions" element={
