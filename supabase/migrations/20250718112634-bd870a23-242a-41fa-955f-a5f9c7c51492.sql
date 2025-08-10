@@ -336,26 +336,3 @@ ANALYZE public.notifications;
 ANALYZE public.messages;
 ANALYZE public.reviews;
 ANALYZE public.transactions;
-
--- =============================================================================
--- OPTIMIZATION COMPLETE
--- =============================================================================
-
--- Log the optimization completion
-INSERT INTO public.activity_log (user_id, action, description, metadata)
-VALUES (
-    '00000000-0000-0000-0000-000000000000'::uuid,
-    'database_optimization',
-    'Comprehensive database security and performance optimization completed',
-    jsonb_build_object(
-        'timestamp', now(),
-        'optimizations', jsonb_build_array(
-            'security_settings',
-            'function_security',
-            'strategic_indexes',
-            'rls_optimization',
-            'validation_triggers',
-            'performance_monitoring'
-        )
-    )
-);
