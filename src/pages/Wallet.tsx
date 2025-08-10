@@ -38,13 +38,25 @@ const Wallet = () => {
     { id: 5, type: 'withdrawal', amount: -35.00, description: 'Auszahlung auf Bankkonto', date: '2024-01-11', status: 'pending' }
   ];
 
-  const handleAddMoney = () => {
+  const handleAddMoney = async () => {
     if (amount && parseFloat(amount) > 0) {
-      setBalance(prev => prev + parseFloat(amount));
-      toast({
-        title: "Geld hinzugefügt",
-        description: `${amount}€ wurden zu Ihrem Wallet hinzugefügt.`,
-      });
+      try {
+        const response = await fetch('http://localhost:4242/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: Math.round(parseFloat(amount) * 100) }),
+        });
+        const data = await response.json();
+        if (data.url) {
+          window.location.href = data.url;
+        }
+      } catch {
+        toast({
+          title: "Fehler",
+          description: "Zahlung fehlgeschlagen.",
+          variant: "destructive",
+        });
+      }
       setAmount('');
       setIsAddMoneyOpen(false);
     }
