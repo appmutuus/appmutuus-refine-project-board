@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { ArrowDown, ArrowUp, CircleDollarSign, CreditCard, History, Plus, TrendingUp, Wallet as WalletIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowDown, ArrowUp, CircleDollarSign, CreditCard, History, Plus, TrendingUp, Wallet as WalletIcon, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +9,25 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DashboardHeader } from '@/components/DashboardHeader';
 import { useToast } from '@/hooks/use-toast';
+import { useKarma } from '@/hooks/useKarma';
 
 const Wallet = () => {
+  const { userStats, convertKarmaToCash } = useKarma();
   const [balance, setBalance] = useState(5.00);
   const [karmaPoints, setKarmaPoints] = useState(120);
   const [isAddMoneyOpen, setIsAddMoneyOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isConvertOpen, setIsConvertOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [karmaAmount, setKarmaAmount] = useState('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (userStats) {
+      setBalance(userStats.cash_points / 100);
+      setKarmaPoints(userStats.karma_points);
+    }
+  }, [userStats]);
 
   // Mock transaction data
   const transactions = [
@@ -54,6 +65,16 @@ const Wallet = () => {
         description: "Ungültiger Betrag oder unzureichendes Guthaben.",
         variant: "destructive"
       });
+    }
+  };
+
+  const handleConvertKarma = async () => {
+    if (karmaAmount && parseInt(karmaAmount) > 0) {
+      const success = await convertKarmaToCash(parseInt(karmaAmount));
+      if (success) {
+        setKarmaAmount('');
+        setIsConvertOpen(false);
+      }
     }
   };
 
@@ -204,6 +225,37 @@ const Wallet = () => {
                 </div>
                 <Button onClick={handleWithdraw} className="w-full bg-blue-600 hover:bg-blue-700">
                   Auszahlung beantragen
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isConvertOpen} onOpenChange={setIsConvertOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 transition-all duration-200 hover:scale-105">
+                <Coins className="w-4 h-4 mr-2" />
+                Karma umwandeln
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gray-800 border-gray-700">
+              <DialogHeader>
+                <DialogTitle className="text-white">Karma in Cash-Punkte</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="karma-amount" className="text-gray-300">Karma Punkte</Label>
+                  <Input
+                    id="karma-amount"
+                    type="number"
+                    placeholder="100"
+                    value={karmaAmount}
+                    onChange={(e) => setKarmaAmount(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white"
+                  />
+                  <p className="text-sm text-gray-400 mt-1">Verfügbar: {karmaPoints}</p>
+                </div>
+                <Button onClick={handleConvertKarma} className="w-full bg-orange-600 hover:bg-orange-700">
+                  Umwandeln
                 </Button>
               </div>
             </DialogContent>
