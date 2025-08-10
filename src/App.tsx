@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Map from "./pages/Map";
 import Jobs from "./pages/Jobs";
+import NewJob from "./pages/NewJob";
 import Profile from "./pages/Profile";
 import Invite from "./pages/Invite";
 import Wallet from "./pages/Wallet";
@@ -60,6 +61,11 @@ const App = () => (
               <Route path="/jobs" element={
                 <ProtectedRoute>
                   <Jobs />
+                </ProtectedRoute>
+              } />
+              <Route path="/jobs/new" element={
+                <ProtectedRoute>
+                  <NewJob />
                 </ProtectedRoute>
               } />
               <Route path="/profile" element={
