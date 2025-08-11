@@ -16,17 +16,20 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  const { ticket_id } = req.body as { ticket_id?: string };
+  // Align with the payment intent creation which stores `job_id`
+  // in the payments table instead of the old `ticket_id` field.
+  const { job_id } = req.body as { job_id?: string };
 
-  if (!ticket_id) {
-    res.status(400).json({ error: 'Missing ticket_id' });
+  if (!job_id) {
+    res.status(400).json({ error: 'Missing job_id' });
     return;
   }
 
   const { data: payment, error } = await supabase
     .from('payments')
     .select('payment_intent_id, applicant_id')
-    .eq('ticket_id', ticket_id)
+    // Match against the job identifier used when creating the payment
+    .eq('job_id', job_id)
     .single();
 
   if (error || !payment) {
@@ -39,7 +42,8 @@ export default async function handler(req: any, res: any) {
   await supabase
     .from('payments')
     .update({ status: 'completed' })
-    .eq('ticket_id', ticket_id);
+    // Update the record corresponding to the job
+    .eq('job_id', job_id);
 
   await supabase.rpc('add_karma', {
     user_id: payment.applicant_id,
