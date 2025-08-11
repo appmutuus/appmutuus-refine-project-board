@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Calendar, MapPin, Euro, Flame, User, Clock } from 'lucide-react';
+import { JobTimer } from './JobTimer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,10 +93,20 @@ export function JobCard({ job, onApply, onView }: JobCardProps) {
           )}
 
           {job.due_date && (
-            <div className="flex items-center text-sm text-gray-500">
-              <Calendar className="w-4 h-4 mr-2" />
-              Bis {formatDate(job.due_date)}
-            </div>
+            <>
+              <div className="flex items-center text-sm text-gray-500">
+                <Calendar className="w-4 h-4 mr-2" />
+                Bis {formatDate(job.due_date)}
+              </div>
+              <div className="flex items-center text-sm text-gray-500">
+                <Clock className="w-4 h-4 mr-2" />
+                <JobTimer
+                  startTime={new Date()}
+                  duration={(new Date(job.due_date).getTime() - Date.now()) / 60000}
+                  mode="countdown"
+                />
+              </div>
+            </>
           )}
         </div>
 

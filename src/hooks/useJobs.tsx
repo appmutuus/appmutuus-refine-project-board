@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { sendNotification } from '@/lib/notifications';
 
 interface Job {
   id: string;
@@ -241,6 +242,15 @@ export function useJobs() {
 
       await fetchApplications();
 
+      const job = jobs.find((j) => j.id === jobId);
+      if (job) {
+        await sendNotification({
+          event_type: 'job_applied',
+          recipient_id: job.creator_id,
+          data: { job_id: jobId, applicant_id: user.id },
+        });
+      }
+
       toast({
         title: "Bewerbung gesendet",
         description: "Ihre Bewerbung wurde erfolgreich eingereicht!",
@@ -274,6 +284,28 @@ export function useJobs() {
 
       await fetchJobs();
       await fetchMyJobs();
+
+      if (status === 'completed') {
+        try {
+          await fetch('/api/payment/capture', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id: jobId }),
+          });
+        } catch (err) {
+          console.error('Payment capture failed', err);
+        }
+      }
+
+      const job = jobs.find((j) => j.id === jobId);
+      const recipientId = assignedTo ?? job?.assigned_to;
+      if (recipientId) {
+        await sendNotification({
+          event_type: `job_${status}`,
+          recipient_id: recipientId,
+          data: { job_id: jobId },
+        });
+      }
 
       toast({
         title: "Job aktualisiert",
