@@ -1,33 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { calculateRemaining, formatTime } from '../../lib/timer.js';
 
-interface JobTimerProps {
-  deadline: Date;
+interface TimerProps {
+  startTime: Date;
+  duration: number; // minutes
+  mode: 'countdown' | 'elapsed';
+  onExpire?: () => void;
 }
 
-export function JobTimer({ deadline }: JobTimerProps) {
-  const [remaining, setRemaining] = useState(() => deadline.getTime() - Date.now());
+export function JobTimer({ startTime, duration, mode, onExpire }: TimerProps) {
+  const [remaining, setRemaining] = useState(() => calculateRemaining(startTime, duration));
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setRemaining(deadline.getTime() - Date.now());
+    const interval = setInterval(() => {
+      const newRemaining = calculateRemaining(startTime, duration);
+      setRemaining(newRemaining);
+      if (newRemaining <= 0) {
+        clearInterval(interval);
+        onExpire?.();
+      }
     }, 1000);
-    return () => clearInterval(id);
-  }, [deadline]);
+    return () => clearInterval(interval);
+  }, [startTime, duration, onExpire]);
 
-  if (remaining <= 0) {
-    return <span className="text-red-600" role="status">Expired</span>;
-  }
-
-  const seconds = Math.floor((remaining / 1000) % 60);
-  const minutes = Math.floor((remaining / 1000 / 60) % 60);
-  const hours = Math.floor(remaining / 1000 / 60 / 60);
-
-  const pad = (n: number) => n.toString().padStart(2, '0');
+  const display = mode === 'countdown'
+    ? formatTime(Math.max(0, remaining))
+    : formatTime(duration * 60000 - remaining);
 
   return (
-    <span aria-label="time remaining">
-      {pad(hours)}:{pad(minutes)}:{pad(seconds)}
-    </span>
+    <div className={`timer ${remaining <= 0 ? 'text-red-500' : 'text-green-500'}`}>{display}</div>
+  );
+}
+
+export function ProgressBar({ elapsedTime, totalTime }: { elapsedTime: number; totalTime: number }) {
+  return (
+    <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div
+        className="bg-blue-600 h-2.5 rounded-full"
+        style={{ width: `${(elapsedTime / totalTime) * 100}%` }}
+      />
+    </div>
   );
 }
 
