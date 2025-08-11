@@ -1,31 +1,29 @@
-import {
-  assertEquals,
-  assertStringIncludes,
-} from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import test from 'node:test';
+import assert from 'node:assert/strict';
 import { buildNotificationContent } from './index.ts';
 
-Deno.test('NEW_APPLICATION template de', () => {
+test('NEW_APPLICATION template de', () => {
   const content = buildNotificationContent('NEW_APPLICATION', {
     job_title: 'Gartenhilfe',
     applicant_name: 'Max',
     lang: 'de',
   });
-  assertEquals(content?.email.subject, 'Neue Bewerbung für Gartenhilfe');
-  assertStringIncludes(content?.email.html ?? '', 'Gartenhilfe');
-  assertStringIncludes(content?.email.html ?? '', 'Max');
-  assertEquals(content?.push.title, 'Neue Bewerbung');
-  assertEquals(content?.push.body, 'Max hat sich beworben');
+  assert.equal(content?.email.subject, 'Neue Bewerbung für Gartenhilfe');
+  assert.ok(content?.email.html?.includes('Gartenhilfe'));
+  assert.ok(content?.email.html?.includes('Max'));
+  assert.equal(content?.push.title, 'Neue Bewerbung');
+  assert.equal(content?.push.body, 'Max hat sich beworben');
 });
 
-Deno.test('NEW_APPLICATION template en', () => {
+test('NEW_APPLICATION template en', () => {
   const content = buildNotificationContent('NEW_APPLICATION', {
     job_title: 'Gardener',
     applicant_name: 'John',
   });
-  assertEquals(content?.email.subject, 'New application for Gardener');
-  assertStringIncludes(content?.email.html ?? '', 'Gardener');
-  assertStringIncludes(content?.email.html ?? '', 'John');
-  assertEquals(content?.push.title, 'New application');
-  assertEquals(content?.push.body, 'John has applied');
+  assert.equal(content?.email.subject, 'New application for Gardener');
+  assert.ok(content?.email.html?.includes('Gardener'));
+  assert.ok(content?.email.html?.includes('John'));
+  assert.equal(content?.push.title, 'New application');
+  assert.equal(content?.push.body, 'John has applied');
 });
 
