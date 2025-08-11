@@ -1,6 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowDown, ArrowUp, CircleDollarSign, CreditCard, History, Plus, TrendingUp, Wallet as WalletIcon, Coins } from 'lucide-react';
+import { ArrowUp, History, Plus, TrendingUp, Wallet as WalletIcon, Coins } from 'lucide-react';
+import { Elements } from '@stripe/react-stripe-js';
+import { stripePromise } from '@/lib/stripe';
+import CheckoutForm from '@/components/CheckoutForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,38 +32,7 @@ const Wallet = () => {
     }
   }, [userStats]);
 
-  // Mock transaction data
-  const transactions = [
-    { id: 1, type: 'earned', amount: 25.00, description: 'Job: Garten aufräumen', date: '2024-01-15', status: 'completed' },
-    { id: 2, type: 'spent', amount: -15.00, description: 'Job: Computer reparieren', date: '2024-01-14', status: 'completed' },
-    { id: 3, type: 'earned', amount: 30.00, description: 'Job: Möbel aufbauen', date: '2024-01-13', status: 'completed' },
-    { id: 4, type: 'earned', amount: 20.00, description: 'Job: Einkaufen', date: '2024-01-12', status: 'completed' },
-    { id: 5, type: 'withdrawal', amount: -35.00, description: 'Auszahlung auf Bankkonto', date: '2024-01-11', status: 'pending' }
-  ];
-
-  const handleAddMoney = async () => {
-    if (amount && parseFloat(amount) > 0) {
-      try {
-        const response = await fetch('http://localhost:4242/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: Math.round(parseFloat(amount) * 100) }),
-        });
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        }
-      } catch {
-        toast({
-          title: "Fehler",
-          description: "Zahlung fehlgeschlagen.",
-          variant: "destructive",
-        });
-      }
-      setAmount('');
-      setIsAddMoneyOpen(false);
-    }
-  };
+  const transactions: Array<any> = [];
 
   const handleWithdraw = () => {
     if (amount && parseFloat(amount) > 0 && parseFloat(amount) <= balance) {
@@ -90,31 +62,6 @@ const Wallet = () => {
     }
   };
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'earned':
-        return <ArrowDown className="w-4 h-4 text-green-500" />;
-      case 'spent':
-        return <ArrowUp className="w-4 h-4 text-blue-500" />;
-      case 'withdrawal':
-        return <ArrowUp className="w-4 h-4 text-red-500" />;
-      default:
-        return <CircleDollarSign className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
-  const getTransactionColor = (type: string) => {
-    switch (type) {
-      case 'earned':
-        return 'text-green-500';
-      case 'spent':
-        return 'text-blue-500';
-      case 'withdrawal':
-        return 'text-red-500';
-      default:
-        return 'text-gray-500';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -197,16 +144,22 @@ const Wallet = () => {
                     className="bg-gray-700 border-gray-600 text-white"
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button onClick={() => setAmount('10')} variant="outline" size="sm" className="bg-gray-700 border-gray-600 text-white">10€</Button>
                   <Button onClick={() => setAmount('25')} variant="outline" size="sm" className="bg-gray-700 border-gray-600 text-white">25€</Button>
                   <Button onClick={() => setAmount('50')} variant="outline" size="sm" className="bg-gray-700 border-gray-600 text-white">50€</Button>
                   <Button onClick={() => setAmount('100')} variant="outline" size="sm" className="bg-gray-700 border-gray-600 text-white">100€</Button>
                 </div>
-                <Button onClick={handleAddMoney} className="w-full bg-green-600 hover:bg-green-700">
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  Mit PayPal bezahlen
-                </Button>
+                <Elements stripe={stripePromise}>
+                  <CheckoutForm
+                    amount={Math.round(parseFloat(amount || '0') * 100)}
+                    onSuccess={() => {
+                      toast({ title: 'Erfolg', description: 'Zahlung erfolgreich!' });
+                      setAmount('');
+                      setIsAddMoneyOpen(false);
+                    }}
+                  />
+                </Elements>
               </div>
             </DialogContent>
           </Dialog>
@@ -284,32 +237,9 @@ const Wallet = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {transactions.map((transaction, index) => (
-                <div 
-                  key={transaction.id} 
-                  className="flex items-center justify-between p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-200 animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="flex items-center space-x-3">
-                    {getTransactionIcon(transaction.type)}
-                    <div>
-                      <p className="text-white font-medium">{transaction.description}</p>
-                      <p className="text-gray-400 text-sm">{transaction.date}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-bold ${getTransactionColor(transaction.type)}`}>
-                      {transaction.amount > 0 ? '+' : ''}{transaction.amount.toFixed(2)}€
-                    </p>
-                    <Badge 
-                      variant={transaction.status === 'completed' ? 'default' : 'outline'}
-                      className={transaction.status === 'completed' ? 'bg-green-600' : 'border-yellow-600 text-yellow-400'}
-                    >
-                      {transaction.status === 'completed' ? 'Abgeschlossen' : 'Ausstehend'}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+              {transactions.length === 0 && (
+                <p className="text-gray-400">Keine Transaktionen vorhanden.</p>
+              )}
             </div>
           </CardContent>
         </Card>

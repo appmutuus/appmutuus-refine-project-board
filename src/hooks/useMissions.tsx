@@ -184,8 +184,8 @@ export function useMissions() {
       //   .from('mission-photos')
       //   .upload(fileName, file);
 
-      // For demo purposes, return a placeholder URL
-      return `https://example.com/mission-photos/${fileName}`;
+      // For demo purposes, no actual upload is performed
+      return '';
     } catch (error: any) {
       toast({
         title: "Upload-Fehler",

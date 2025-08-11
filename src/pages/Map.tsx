@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MapPin, Filter, List, Map as MapIcon, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,91 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DashboardHeader } from '@/components/DashboardHeader';
 import { CreateJobModal } from '@/components/CreateJobModal';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useJobs } from '@/hooks/useJobs';
 
-// Mock data for jobs
-const mockJobs = [
-  {
-    id: '1',
-    title: 'Einkaufen für Nachbarin',
-    description: 'Wöchentlicher Einkauf für ältere Dame',
-    category: 'Einkaufen',
-    job_type: 'good_deeds',
-    karma_reward: 50,
-    location: 'Düsseldorf Altstadt',
-    latitude: 51.2277,
-    longitude: 6.7735,
-    status: 'open',
-    creator: { first_name: 'Maria', last_name: 'Schmidt' },
-    distance: '0.8 km',
-    estimated_duration: 60
-  },
-  {
-    id: '2',
-    title: 'Möbel aufbauen',
-    description: 'IKEA Schrank aufbauen',
-    category: 'Haushalt',
-    job_type: 'kein_bock',
-    budget: 45,
-    location: 'Düsseldorf Pempelfort',
-    latitude: 51.2500,
-    longitude: 6.7900,
-    status: 'open',
-    creator: { first_name: 'Thomas', last_name: 'Weber' },
-    distance: '1.2 km',
-    estimated_duration: 120
-  },
-  {
-    id: '3',
-    title: 'Gartenarbeit',
-    description: 'Hecke schneiden und Laub harken',
-    category: 'Garten',
-    job_type: 'kein_bock',
-    budget: 60,
-    location: 'Düsseldorf Oberkassel',
-    latitude: 51.2400,
-    longitude: 6.7600,
-    status: 'open',
-    creator: { first_name: 'Andrea', last_name: 'Müller' },
-    distance: '2.1 km',
-    estimated_duration: 180
-  },
-  {
-    id: '4',
-    title: 'Hund Gassi führen',
-    description: 'Täglicher Spaziergang mit Golden Retriever',
-    category: 'Tiere',
-    job_type: 'good_deeds',
-    karma_reward: 30,
-    location: 'Düsseldorf Bilk',
-    latitude: 51.2100,
-    longitude: 6.7800,
-    status: 'open',
-    creator: { first_name: 'Klaus', last_name: 'Fischer' },
-    distance: '1.5 km',
-    estimated_duration: 45
-  }
-];
+// Jobs are loaded from Supabase via useJobs hook
 
 const Map = () => {
+  const { jobs, applyForJob } = useJobs();
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedJobType, setSelectedJobType] = useState<string>('all');
-  const [maxDistance, setMaxDistance] = useState<string>('10');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<any>(null);
 
-  // Filter jobs based on search and filters
-  const filteredJobs = mockJobs.filter(job => {
+  const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         job.description.toLowerCase().includes(searchQuery.toLowerCase());
+      job.description?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || job.category === selectedCategory;
     const matchesJobType = selectedJobType === 'all' || job.job_type === selectedJobType;
-    const matchesDistance = parseFloat(job.distance) <= parseFloat(maxDistance);
-    
-    return matchesSearch && matchesCategory && matchesJobType && matchesDistance;
+    return matchesSearch && matchesCategory && matchesJobType;
   });
 
   const handleCreateJob = (jobData: any) => {
@@ -102,8 +35,7 @@ const Map = () => {
   };
 
   const handleApplyForJob = (jobId: string) => {
-    console.log('Applying for job:', jobId);
-    // Here you would implement the application logic
+    applyForJob(jobId);
   };
 
   const getJobTypeColor = (jobType: string) => {
@@ -180,18 +112,6 @@ const Map = () => {
               </SelectContent>
             </Select>
 
-            {/* Distance Filter */}
-            <Select value={maxDistance} onValueChange={setMaxDistance}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                <SelectValue placeholder="Entfernung" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="5">5 km</SelectItem>
-                <SelectItem value="10">10 km</SelectItem>
-                <SelectItem value="20">20 km</SelectItem>
-                <SelectItem value="50">50 km</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
@@ -254,7 +174,7 @@ const Map = () => {
                 
                 <div className="flex items-center text-sm text-gray-500 mb-2">
                   <MapPin className="w-4 h-4 mr-1" />
-                  {job.location} • {job.distance}
+                  {job.location}
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
@@ -269,11 +189,8 @@ const Map = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-gray-700">
-                  <div className="text-sm text-gray-400">
-                    von {job.creator.first_name} {job.creator.last_name}
-                  </div>
-                  <Button 
+                <div className="flex items-center justify-end pt-3 border-t border-gray-700">
+                  <Button
                     className="bg-green-600 hover:bg-green-700"
                     onClick={() => handleApplyForJob(job.id)}
                   >

@@ -1,10 +1,15 @@
 import { createServer as createHttpServer } from 'http';
 import { createServer as createHttpsServer } from 'https';
 import { readFileSync } from 'fs';
+import Stripe from 'stripe';
 
 const PORT = process.env.PORT || 4242;
 const SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2022-11-15'
+});
 
 const requestHandler = (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -17,7 +22,32 @@ const requestHandler = (req, res) => {
     return;
   }
 
-  if (req.url === '/create-checkout-session' && req.method === 'POST') {
+  if (req.url === '/create-payment-intent' && req.method === 'POST') {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', async () => {
+      try {
+        const { amount } = JSON.parse(data);
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount,
+          currency: 'eur'
+        });
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({ clientSecret: paymentIntent.client_secret }));
+      } catch (err) {
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({ error: 'Unable to create payment intent' }));
+      }
+    });
+  } else if (req.url === '/create-checkout-session' && req.method === 'POST') {
     let data = '';
     req.on('data', chunk => {
       data += chunk;
