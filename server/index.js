@@ -1,8 +1,12 @@
-import { createServer } from 'http';
+import { createServer as createHttpServer } from 'http';
+import { createServer as createHttpsServer } from 'https';
+import { readFileSync } from 'fs';
 
 const PORT = process.env.PORT || 4242;
+const SSL_KEY_PATH = process.env.SSL_KEY_PATH;
+const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
 
-const server = createServer((req, res) => {
+const requestHandler = (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(200, {
       'Access-Control-Allow-Origin': '*',
@@ -58,7 +62,20 @@ const server = createServer((req, res) => {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not found');
   }
-});
+};
+
+let server;
+if (SSL_KEY_PATH && SSL_CERT_PATH) {
+  const options = {
+    key: readFileSync(SSL_KEY_PATH),
+    cert: readFileSync(SSL_CERT_PATH),
+  };
+  server = createHttpsServer(options, requestHandler);
+  console.log('HTTPS server enabled');
+} else {
+  server = createHttpServer(requestHandler);
+  console.log('HTTPS certificates not found, falling back to HTTP');
+}
 
 server.listen(PORT, () => {
   console.log(`Stripe server running on port ${PORT}`);

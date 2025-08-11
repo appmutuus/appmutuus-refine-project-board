@@ -70,6 +70,10 @@ VITE_SUPABASE_ANON_KEY=
 VITE_STRIPE_SECRET_KEY=
 ```
 
+### HTTPS configuration
+
+To run the Stripe server over HTTPS, provide paths to your SSL key and certificate using the `SSL_KEY_PATH` and `SSL_CERT_PATH` environment variables. When these variables are set, the server will start with HTTPS; otherwise it falls back to HTTP.
+
 ## Job creation form
 
 A basic job creation form is available at `/jobs/new`. It validates input with Zod and stores new jobs in Supabase.
