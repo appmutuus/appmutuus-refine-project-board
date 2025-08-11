@@ -290,7 +290,8 @@ export function useJobs() {
           await fetch('/api/payment/capture', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ticket_id: jobId }),
+            // The capture endpoint now expects a `job_id` field
+            body: JSON.stringify({ job_id: jobId }),
           });
         } catch (err) {
           console.error('Payment capture failed', err);
