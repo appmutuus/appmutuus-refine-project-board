@@ -1,0 +1,81 @@
+{
+  "name": "Mutuus App",
+  "short_name": "Mutuus",
+  "description": "Die Community für gegenseitige Hilfe - Jobs finden, Karma sammeln, Geld verdienen",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "de",
+  "categories": ["social", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "http://mutuus-app.de/assets/logopng.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "http://mutuus-app.de/assets/logopng.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jobs finden",
+      "short_name": "Jobs",
+      "description": "Verfügbare Jobs in Ihrer Nähe finden",
+      "url": "/jobs",
+      "icons": [
+        {
+          "src": "http://mutuus-app.de/assets/logopng.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Karte",
+      "short_name": "Map",
+      "description": "Jobs auf der Karte anzeigen",
+      "url": "/map",
+      "icons": [
+        {
+          "src": "http://mutuus-app.de/assets/logopng.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Profil",
+      "short_name": "Profil",
+      "description": "Ihr Profil verwalten",
+      "url": "/profile",
+      "icons": [
+        {
+          "src": "http://mutuus-app.de/assets/logopng.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "http://mutuus-app.de/assets/logopng.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Mutuus Dashboard"
+    },
+    {
+      "src": "http://mutuus-app.de/assets/logopng.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mutuus Mobile"
+    }
+  ]
+}

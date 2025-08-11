@@ -9,6 +9,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminAuthProvider } from "@/hooks/useAdminAuth";
 import { AdminRoute } from "@/components/AdminRoute";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import PWAUpdatePrompt from "@/components/PWAUpdatePrompt";
+import OfflineIndicator from "@/components/OfflineIndicator";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Map from "./pages/Map";
@@ -36,6 +39,9 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <Sonner />
+            <PWAInstallPrompt />
+            <PWAUpdatePrompt />
+            <OfflineIndicator />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Auth />} />
