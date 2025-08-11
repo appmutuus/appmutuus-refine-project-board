@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+// Supabase client is dynamically imported to avoid issues in non-Deno environments
 
 interface NotificationRequest {
   event_type: string;
@@ -11,14 +11,20 @@ interface TemplateContent {
   push: { title: string; body: string };
 }
 
-const getSiteUrl = (): string => Deno.env.get('SITE_URL') ?? 'http://localhost:3000';
+const getSiteUrl = (): string => {
+  if (typeof Deno !== 'undefined') {
+    return Deno.env.get('SITE_URL') ?? 'http://localhost:3000';
+  }
+  return process.env.SITE_URL ?? 'http://localhost:3000';
+};
 
-function getSupabaseClient() {
-  const url = Deno.env.get('SUPABASE_URL');
-  const key = Deno.env.get('SUPABASE_ANON_KEY');
+async function getSupabaseClient() {
+  const url = typeof Deno !== 'undefined' ? Deno.env.get('SUPABASE_URL') : process.env.SUPABASE_URL;
+  const key = typeof Deno !== 'undefined' ? Deno.env.get('SUPABASE_ANON_KEY') : process.env.SUPABASE_ANON_KEY;
   if (!url || !key) {
     throw new Error('Missing Supabase env variables');
   }
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
   return createClient(url, key);
 }
 
@@ -125,7 +131,7 @@ export default async (req: Request): Promise<Response> => {
     if (!content) {
       return new Response('Unsupported event type', { status: 400 });
     }
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     interface Profile {
       email: string;
       push_token: string | null;
