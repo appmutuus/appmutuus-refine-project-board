@@ -17,6 +17,7 @@ interface AuthContextType {
   loginAttempts: number;
   isLocked: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithProvider: (provider: 'google' | 'facebook') => Promise<void>;
   signUp: (email: string, password: string, userData?: { first_name?: string; last_name?: string }) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -144,6 +145,23 @@ export function SecureAuthProvider({ children }: { children: ReactNode }) {
         title: "Erfolgreich angemeldet",
         description: "Willkommen zurück!",
       });
+    } catch (error: any) {
+      toast({
+        title: "Anmeldung fehlgeschlagen",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signInWithProvider = async (provider: 'google' | 'facebook') => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      if (error) throw error;
     } catch (error: any) {
       toast({
         title: "Anmeldung fehlgeschlagen",
@@ -320,6 +338,7 @@ export function SecureAuthProvider({ children }: { children: ReactNode }) {
     loginAttempts,
     isLocked,
     signIn,
+    signInWithProvider,
     signUp,
     signOut,
     resetPassword,
