@@ -81,8 +81,8 @@ const Jobs = () => {
             <p className="text-gray-400">Entdecken Sie interessante Aufgaben in Ihrer Nähe</p>
           </div>
           
-          <Button 
-            onClick={() => window.location.href = '/my-jobs'}
+          <Button
+            onClick={() => window.location.href = '/jobs/new'}
             className="mt-4 sm:mt-0 btn-futuristic glow-blue hover-lift"
           >
             <Plus className="w-4 h-4 mr-2" />
