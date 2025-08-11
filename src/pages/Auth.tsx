@@ -7,11 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
-import { Eye, EyeOff, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Loader2, Chrome, Facebook } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, signIn, signUp, resetPassword, loading } = useAuth();
+  const { user, signIn, signUp, resetPassword, signInWithProvider, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -332,6 +332,27 @@ const Auth = () => {
                       </button>
                     </div>
                   </form>
+                  <div className="mt-6 space-y-3">
+                    <div className="text-center text-gray-400 text-sm">oder</div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full flex items-center justify-center"
+                      onClick={() => signInWithProvider('google')}
+                    >
+                      <Chrome className="h-4 w-4 mr-2" />
+                      Mit Google anmelden
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full flex items-center justify-center"
+                      onClick={() => signInWithProvider('facebook')}
+                    >
+                      <Facebook className="h-4 w-4 mr-2" />
+                      Mit Facebook anmelden
+                    </Button>
+                  </div>
                 </TabsContent>
 
               <TabsContent value="signup">
