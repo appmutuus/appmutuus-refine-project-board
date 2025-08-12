@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, MapPin, Euro, Flame, User, Clock } from 'lucide-react';
+import { Calendar, MapPin, Euro, Flame, User, Clock, Eye } from 'lucide-react';
 import { JobTimer } from './JobTimer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ interface Job {
   due_date?: string;
   status: string;
   created_at: string;
+  view_count?: number;
 }
 
 interface JobCardProps {
@@ -127,7 +128,13 @@ export function JobCard({ job, onApply, onView }: JobCardProps) {
             )}
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
+            {typeof job.view_count !== 'undefined' && (
+              <div className="flex items-center text-sm text-gray-500 mr-2">
+                <Eye className="w-4 h-4 mr-1" />
+                {job.view_count}
+              </div>
+            )}
             {onView && (
               <Button 
                 variant="outline" 

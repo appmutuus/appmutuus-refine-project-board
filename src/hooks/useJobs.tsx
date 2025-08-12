@@ -25,6 +25,7 @@ interface Job {
   requirements?: string[];
   created_at: string;
   updated_at: string;
+  view_count?: number;
 }
 
 interface JobApplication {
@@ -57,6 +58,7 @@ type DatabaseJob = {
   requirements?: string[] | null;
   created_at: string | null;
   updated_at: string | null;
+  view_count?: number | null;
 };
 
 export function useJobs() {
@@ -96,6 +98,7 @@ export function useJobs() {
     requirements: dbJob.requirements || undefined,
     created_at: dbJob.created_at || new Date().toISOString(),
     updated_at: dbJob.updated_at || new Date().toISOString(),
+    view_count: dbJob.view_count || 0,
   });
 
   const fetchJobs = async () => {
@@ -150,6 +153,15 @@ export function useJobs() {
       setApplications(data || []);
     } catch (error: any) {
       console.error('Error fetching applications:', error);
+    }
+  };
+
+  const recordJobView = async (jobId: string) => {
+    try {
+      await supabase.rpc('increment_job_view', { job_id: jobId });
+      await fetchJobs();
+    } catch (error: any) {
+      console.error('Error recording job view:', error);
     }
   };
 
@@ -335,5 +347,6 @@ export function useJobs() {
     fetchJobs,
     fetchMyJobs,
     fetchApplications,
+    recordJobView,
   };
 }
