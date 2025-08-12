@@ -11,7 +11,7 @@ import { JobCard } from '@/components/JobCard';
 import { useJobs } from '@/hooks/useJobs';
 
 const Jobs = () => {
-  const { jobs, loading, applyForJob } = useJobs();
+  const { jobs, loading, applyForJob, recordJobView } = useJobs();
   const [filteredJobs, setFilteredJobs] = useState(jobs);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -43,7 +43,8 @@ const Jobs = () => {
     await applyForJob(jobId, 'Ich interessiere mich für diesen Job!');
   };
 
-  const handleViewJob = (jobId: string) => {
+  const handleViewJob = async (jobId: string) => {
+    await recordJobView(jobId);
     console.log('View job:', jobId);
     // In a real app, this would navigate to job details page
   };

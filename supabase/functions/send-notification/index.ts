@@ -63,6 +63,35 @@ export function buildNotificationContent(
         },
       };
     }
+    case 'job_applied': {
+      const jobTitle = String(data.job_title ?? '');
+      const applicant = String(data.applicant_name ?? '');
+      const url = `${getSiteUrl()}/dashboard/applications`;
+      if (lang === 'de') {
+        return {
+          email: {
+            subject: `Neue Bewerbung für ${jobTitle}`,
+            html:
+              `<p>${applicant} hat sich auf ${jobTitle} beworben.</p><p><a href="${url}">Ansehen</a></p>`,
+          },
+          push: {
+            title: 'Neue Bewerbung',
+            body: `${applicant} hat sich beworben`,
+          },
+        };
+      }
+      return {
+        email: {
+          subject: `New application for ${jobTitle}`,
+          html:
+            `<p>${applicant} applied for ${jobTitle}.</p><p><a href="${url}">View</a></p>`,
+        },
+        push: {
+          title: 'New application',
+          body: `${applicant} has applied`,
+        },
+      };
+    }
     default:
       return null;
   }

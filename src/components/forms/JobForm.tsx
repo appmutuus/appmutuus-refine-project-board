@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import supabase from '@/lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useJobs } from '@/hooks/useJobs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,14 @@ export const jobSchema = z.object({
   if (!data.timeLimit && !data.deadline) {
     ctx.addIssue({ code: 'custom', path: ['timeLimit'], message: 'Provide time limit or deadline' });
   }
+  const maxDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  if (data.deadline && data.deadline > maxDate) {
+    ctx.addIssue({ code: 'custom', path: ['deadline'], message: 'Maximum allowed deadline is 30 days' });
+  }
+  const maxMinutes = 30 * 24 * 60;
+  if (data.timeLimit && data.timeLimit > maxMinutes) {
+    ctx.addIssue({ code: 'custom', path: ['timeLimit'], message: 'Time limit cannot exceed 30 days' });
+  }
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -34,6 +42,7 @@ export type JobFormValues = z.infer<typeof jobSchema>;
 export function JobForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { createJob } = useJobs();
   const {
     register,
     handleSubmit,
@@ -45,28 +54,27 @@ export function JobForm() {
 
   const onSubmit = async (values: JobFormValues) => {
     setLoading(true);
-    const deadline = values.deadline ?? new Date(Date.now() + (values.timeLimit || 0) * 60000);
-    const { data, error } = await supabase
-      .from('jobs')
-      .insert({
+    try {
+      const deadline = values.deadline ?? new Date(Date.now() + (values.timeLimit || 0) * 60000);
+      const job = await createJob({
         title: values.title,
         description: values.description,
-        mode: values.mode,
-        price: values.mode === 'paid' ? values.price : null,
         category: values.category,
-        location: `POINT(${values.longitude} ${values.latitude})`,
-        deadline: deadline.toISOString(),
-        status: 'open',
-      })
-      .select()
-      .single();
-
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
+        job_type: values.mode === 'goodDeeds' ? 'good_deeds' : 'kein_bock',
+        budget: values.mode === 'paid' ? values.price : undefined,
+        location: '',
+        latitude: values.latitude,
+        longitude: values.longitude,
+        estimated_duration: values.timeLimit,
+        due_date: deadline.toISOString(),
+      });
       toast.success('Job created');
-      navigate(`/jobs/${data.id}`);
+      navigate('/jobs');
+      return job;
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
