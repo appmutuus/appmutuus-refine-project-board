@@ -3,6 +3,20 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+// Rate limiting for auth operations
+const authRateLimit = {
+  lastRequest: 0,
+  minInterval: 1000, // Minimum 1 second between requests
+  canMakeRequest() {
+    const now = Date.now();
+    if (now - this.lastRequest < this.minInterval) {
+      return false;
+    }
+    this.lastRequest = now;
+    return true;
+  }
+};
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -25,10 +39,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    let authStateChangeCount = 0;
+    const maxAuthStateChanges = 10; // Prevent excessive state changes
     
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        authStateChangeCount++;
+        
+        // Prevent excessive auth state changes that could trigger rate limits
+        if (authStateChangeCount > maxAuthStateChanges) {
+          console.warn('Too many auth state changes detected, ignoring to prevent rate limiting');
+          return;
+        }
+        
         console.log('🔐 Auth state changed:', event, session?.user?.email || 'No user');
 
         if (!mounted) return;
@@ -73,17 +97,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (mounted) {
-        console.log('🔄 Initial session check:', session?.user?.email || 'No session');
-        if (error) {
-          console.error('Session check error:', error);
+    if (authRateLimit.canMakeRequest()) {
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        if (mounted) {
+          console.log('🔄 Initial session check:', session?.user?.email || 'No session');
+          if (error) {
+            console.error('Session check error:', error);
+          }
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
         }
-        setSession(session);
-        setUser(session?.user ?? null);
+      }).catch((error) => {
+        console.error('Session check failed:', error);
         setLoading(false);
-      }
-    });
+      });
+    } else {
+      console.log('Skipping session check due to rate limiting');
+      setLoading(false);
+    }
 
     return () => {
       mounted = false;
@@ -93,6 +125,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   const signIn = async (email: string, password: string) => {
+    if (!authRateLimit.canMakeRequest()) {
+      throw new Error('Zu viele Anmeldeversuche. Bitte warten Sie einen Moment.');
+    }
+    
     try {
       setLoading(true);
       console.log('🔑 Attempting sign in for:', email);
@@ -155,6 +191,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, userData = {}) => {
+    if (!authRateLimit.canMakeRequest()) {
+      throw new Error('Zu viele Registrierungsversuche. Bitte warten Sie einen Moment.');
+    }
+    
     try {
       setLoading(true);
       console.log('📝 Attempting sign up for:', email);

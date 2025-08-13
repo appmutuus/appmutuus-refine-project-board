@@ -67,6 +67,7 @@ Create a `.env.local` file and provide the following keys:
 ```
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+VITE_STRIPE_PUBLISHABLE_KEY=
 VITE_STRIPE_SECRET_KEY=
 ```
 

@@ -84,7 +84,13 @@ class PWAManager {
         });
 
       } catch (error) {
-        console.error('Service Worker registration failed:', error);
+        // Check if this is a StackBlitz environment limitation
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('StackBlitz') || errorMessage.includes('webcontainer')) {
+          console.warn('Service Worker not supported in this environment (StackBlitz)');
+        } else {
+          console.error('Service Worker registration failed:', error);
+        }
       }
     }
   }
