@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DashboardHeader } from '@/components/DashboardHeader';
 import { JobCard } from '@/components/JobCard';
 import { useJobs } from '@/hooks/useJobs';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import JobForm from '@/components/forms/JobForm';
 
 const Jobs = () => {
   const { jobs, loading, applyForJob, recordJobView } = useJobs();
@@ -16,6 +18,7 @@ const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedJobType, setSelectedJobType] = useState('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     let filtered = jobs;
@@ -82,13 +85,20 @@ const Jobs = () => {
             <p className="text-gray-400">Entdecken Sie interessante Aufgaben in Ihrer Nähe</p>
           </div>
           
-          <Button
-            onClick={() => window.location.href = '/jobs/new'}
-            className="mt-4 sm:mt-0 btn-futuristic glow-blue hover-lift"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Job erstellen
-          </Button>
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="mt-4 sm:mt-0 btn-futuristic glow-blue hover-lift">
+                <Plus className="w-4 h-4 mr-2" />
+                Job erstellen
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gray-800 border-gray-700">
+              <DialogHeader>
+                <DialogTitle className="text-white">Neuen Job erstellen</DialogTitle>
+              </DialogHeader>
+              <JobForm onSuccess={() => setIsCreateModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Filters */}
