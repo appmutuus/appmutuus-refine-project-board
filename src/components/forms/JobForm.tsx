@@ -39,7 +39,7 @@ export const jobSchema = z.object({
 
 export type JobFormValues = z.infer<typeof jobSchema>;
 
-export function JobForm() {
+export function JobForm({ onSuccess }: { onSuccess?: () => void }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { createJob } = useJobs();
@@ -69,6 +69,7 @@ export function JobForm() {
         due_date: deadline.toISOString(),
       });
       toast.success('Job created');
+      onSuccess?.();
       navigate('/jobs');
       return job;
     } catch (error: any) {
